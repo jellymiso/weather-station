@@ -16,7 +16,7 @@ function startServer(route, handle) {
 		route(pathname, handle, response, request);
 		
 	}
-	http.createServer(onRequest).listen(41130);
+	http.createServer(onRequest).listen(process.env.PORT || 41130);
 	console.log("Server has started.");
 	console.log('Process ID:', process.pid);
 }
