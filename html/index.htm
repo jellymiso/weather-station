@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 2</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@100;200;300;400;600;900&display=swap" rel="stylesheet">
+
+  <!-- Theme Styles -->
+  <link rel="stylesheet" type="text/css" href="../css/base.css" />
+
+  <!-- Plugins Styles -->
+  <link rel="stylesheet" type="text/css" href="../css/air-datepicker/datepicker.css" />
+  <link rel="stylesheet" type="text/css" href="../css/chart-js/chart.css" />
+
+</head>
+<body>
+  <div class="main">
+    <div class="title-div">
+      <h1>
+        <sub>
+          <span class="sub-title">Murdoch Weather Station</span>
+        </sub>
+        Weather Measurement
+      </h1>
+    </div>
+    <div class="form-wrap-div">
+
+      <div class="form-main-div">
+        <p>Select the options for weather data retrieval:</p>
+        <div class="fields-wrap-div">
+          <p class="field-group-label">Weather data to retreive:</p>
+          <div class="field-div checkbox full-left">
+            <input type="checkbox" value="Wind Speed" id="cbxWWindSpd" name="cbgWeather" />
+            <label for="cbxWWindSpd" class="blue">Wind Speed <span class="tick"></span></label>
+            <input type="checkbox" value="Solar Radiation" id="cbxWSolarRad" name="cbgWeather" />
+            <label for="cbxWSolarRad" class="pink">Solar Radiation <span class="tick"></span></label>
+          </div>
+          <p class="field-group-label">Display format(s) for results:</p>
+          <div class="field-div checkbox full-left">
+            <input type="checkbox" value="Table" id="cbxDTable" name="cbgDisplay" />
+            <label for="cbxDTable" class="chocolate">Table <span class="tick"></span></label>
+            <input type="checkbox" value="Graph" id="cbxDGraph" name="cbgDisplay" />
+            <label for="cbxDGraph" class="chocolate">Graph <span class="tick"></span></label>
+          </div>
+          <p class="field-group-note">NOTE: Line chart will be used for the graph display; <br/>However when less than 3 months are selected, bar chart will be use instead.</p>
+
+          <p class="field-group-label">Year of data to retrieve:</p>
+          <div class="field-div full-left">
+            <input type="text" value="" placeholder="" id="txtYear" required readonly />
+            <label for="txtYear">Year</label>
+          </div>
+          <p class="field-group-label">Months of data to retrieve:</p>
+          <div class="field-div">
+            <input type="text" class="pink" value="" placeholder="" id="txtMonthFrom" required readonly />
+            <label for="txtMonthFrom">Month From</label>
+          </div>
+          <div class="field-div right">
+            <input type="text" class="pink" value="" placeholder="" id="txtMonthTo" required readonly />
+            <label for="txtMonthTo">Month To</label>
+          </div>
+
+          <div class="field-div full-left action">
+            <a class="btn alt" id="abnSearch" href="javascript:void(0);">Retrieve Data</a>
+            <a class="btn chocolate disabled" id="abnReset" href="javascript:void(0);">Reset Form</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-message"></div>
+
+      <div class="result-div">
+
+        <h1 class="form-options-text hide">Weather data for: <span class="option">Year&nbsp;<span class="year"></span>,&nbsp;<span class="month-from"></span>&nbsp;&mdash;&nbsp;<span class="month-to"></span></span></h1>
+
+        <div class="result table hide">
+
+          <div class="table-div">
+            <div class="row-div header title chocolate">
+              <div class="cell-div">[year]</div>
+            </div>
+            <div class="row-div header chocolate">
+              <div class="cell-div"></div>
+              <div class="cell-div hide">Jan</div>
+              <div class="cell-div hide">Feb</div>
+              <div class="cell-div hide">Mar</div>
+              <div class="cell-div hide">Apr</div>
+              <div class="cell-div hide">May</div>
+              <div class="cell-div hide">Jun</div>
+              <div class="cell-div hide">Jul</div>
+              <div class="cell-div hide">Aug</div>
+              <div class="cell-div hide">Sep</div>
+              <div class="cell-div hide">Oct</div>
+              <div class="cell-div hide">Nov</div>
+              <div class="cell-div hide">Dec</div>
+            </div>
+            <div class="row-div soda-hover" id="trWindSpeed">
+              <div class="cell-div head soda">Monthly average wind speed <span class="no-transform">(km/h)</span></div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+            </div>
+            <div class="row-div strawberry-hover" id="trSolarRadiation">
+              <div class="cell-div head strawberry">Monthly total solar radiation <span class="no-transform">(kWh/m&sup2;)</span></div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+              <div class="cell-div hide">&nbsp;-&nbsp;</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="result graph  hide">
+          <div class="svg-wrap">
+            <canvas width="400" height="240" aria-label="Weather Data Graph" role="img"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+
+
+    </div>
+
+  </div>
+
+  <div class="page-loader hide">
+    <div class="loader-div">
+      <div class="page-spinner-wrap">
+        <div class="page-spinner">
+          <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        </div>
+      </div>
+      <div class="loading-msg">Counting stars in the sky, please&nbsp;wait...</div>
+    </div>
+  </div>
+
+  <script src="../js/client/jquery/jquery-3.3.1.min.js"></script>
+  <script src="../js/client/jquery/air-datepicker/js/datepicker.min.js" type="text/javascript"></script>
+  <script src="../js/client/jquery/air-datepicker/js/i18n/datepicker.en.js" type="text/javascript"></script>
+  <script src="../js/client/chart-js/chart.min.js" type="text/javascript"></script>
+  <script src="../js/client/home.js" type="text/javascript"></script>
+</body>
+</html>
