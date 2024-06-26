@@ -2,9 +2,10 @@
 //Modules Import
 //===============
 var fs = require("fs");
-var http = require("http");
+var https = require("https");
 var path = require("path");
 var qs = require('querystring');
+var os = require('os');
 var xmldomPS = require('xmldom').DOMParser;
 
 //get and response initial html
@@ -182,14 +183,14 @@ function processRequest(response, dataYear, dataMonthFrom, dataMonthTo, weatherD
 async function webPageExistCheck(yearOfData) {
 	return await new Promise((resolve, reject) => {
 		//
-		var myReq = http.request({
-			hostname: 'it.murdoch.edu.au',
-			path: '/~S900432D/ict375/data/' + yearOfData + '.json',
+		var myReq = https.request({
+			hostname: 'raw.githubusercontent.com',
+			path: '/jellymiso/resource-dump/main/weather-station/data/' + yearOfData + '.json',
 			method: 'HEAD'
 		});
 		//
 		myReq.on('response', resp => {
-			//sconsole.log(resp);
+			//console.log(resp);
 			if (resp.statusCode == "200") {
 				resolve(true);
 			}
@@ -271,7 +272,7 @@ function downloadFile(yearOfData, formatExt, onComplete) {
 	var file = fs.createWriteStream(path);
 	var isDLsuccess = false;
 	//
-	var myReq = http.get("http://it.murdoch.edu.au/~S900432D/ict375/data/" + yearOfData + formatExt, (resp) => {
+	var myReq = https.get("https://raw.githubusercontent.com/jellymiso/resource-dump/main/weather-station/data/" + yearOfData + formatExt, (resp) => {
 
 		//download data file
 		console.log("--Begin downloading =>")
