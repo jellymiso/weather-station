@@ -268,29 +268,41 @@ async function requestData(yearOfData, monthFrom, monthTo, weatherData, formatEx
 function downloadFile(yearOfData, formatExt, onComplete) {
 	//writable stream to download the data
 	var path = "./data/data-" + yearOfData + formatExt;
-	var file = fs.createWriteStream(path);
+	// 
 	var isDLsuccess = false;
 	//
-	var myReq = https.get("https://raw.githubusercontent.com/jellymiso/resource-dump/main/weather-station/data/" + yearOfData + formatExt, (resp) => {
+	try {
+		var file = fs.createWriteStream(path);
+		var myReq = https.get("https://raw.githubusercontent.com/jellymiso/resource-dump/main/weather-station/data/" + yearOfData + formatExt, (resp) => {
 
-		//download data file
-		console.log("--Begin downloading =>")
-		resp.pipe(file);
-		//download finish
-		file.on("finish", () => {
-			file.end();
-			isDLsuccess = true;
-			if (onComplete) { onComplete(isDLsuccess); }
+			//download data file
+			console.log("--Begin downloading =>")
+			resp.pipe(file);
+			//download finish
+			file.on("finish", () => {
+				file.end();
+				isDLsuccess = true;
+				if (onComplete) { onComplete(isDLsuccess); }
+			})
+
+			//error with request
 		})
+		
+		myReq.on("error", (err) => {
+			console.log("--Download request error:", err.message);
+      fs.unlink(path, (unlinkErr) => {
+        if (unlinkErr) console.log("--Failed to delete file (probably read-only):", unlinkErr.message);
+        if (onComplete) onComplete(isDLsuccess); // call callback anyway
+      });
+		});
+   
+  } catch (e) {
+    console.log("--Unexpected error during download:", e.message);
+    if (onComplete) onComplete(isDLsuccess); // always call callback
+  }
 
-		//error with request
-	}).on("error", (err) => {
-		//unlink if error
-		fs.unlink(path);
-		//
-		console.log(err.message);
-		if (onComplete) { onComplete(isDLsuccess); }
-	});
+
+
 }
 
 //read file containing requested data
