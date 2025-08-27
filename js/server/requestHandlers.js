@@ -7,6 +7,8 @@ var path = require("path");
 var qs = require('querystring');
 var os = require('os');
 var xmldomPS = require('xmldom').DOMParser;
+var weatherDataFileHost = "raw.githubusercontent.com";
+var weatherDataFilePath = "/jellymiso/resource-dump/main/weather-station/data/asd";
 
 //get and response initial html
 function appStart(response, request, projectRoot) {
@@ -145,9 +147,12 @@ function getWeatherData(response, request, projectRoot) {
 					console.log("::> File is XML!");
 					processRequest(response, dataYear, dataMonthFrom, dataMonthTo, weatherData, displayFormat,".xml", projectRoot);
 				}
-			}).catch(function (reason) {
-				throw "ERROR: " + reason;
-			});
+     }).catch(function (reason) {
+        // Handle the error gracefully without re-throwing
+        console.error("::> ERROR: Failed to check file type:", reason);
+        response.writeHead(500, { 'Content-Type': 'text/plain' });
+        response.end("Server error: Could not verify data source.");
+      });
 		});
 		//
 	}
@@ -156,8 +161,6 @@ function getWeatherData(response, request, projectRoot) {
 		response.end("Method not allowed!!");
 	}
 	//
-
-
 }
 
 //process for requesting data and writing to client
@@ -183,8 +186,8 @@ async function webPageExistCheck(yearOfData) {
 	return await new Promise((resolve, reject) => {
 		//
 		var myReq = https.request({
-			hostname: 'raw.githubusercontent.com',
-			path: '/jellymiso/resource-dump/main/weather-station/data/' + yearOfData + '.json',
+			hostname: weatherDataFileHost,
+			path: weatherDataFilePath + yearOfData + '.json',
 			method: 'HEAD'
 		});
 		//
@@ -219,12 +222,13 @@ async function requestData(yearOfData, monthFrom, monthTo, weatherData, formatEx
 			var myDataObj = {};
 			myDataObj["Year"] = yearOfData;
 			myDataObj["Months"] = {};
+			var localFilePath = path.join(projectRoot, "data", "local-data", yearOfData + formatExt)
 			//
 			if (dlStatus) {
 				console.log("::> SUCCESS");
 				//successful download, continue to read downloaded file at /data/
 				readDataFile(
-					"./data/data-" + yearOfData + formatExt, //path
+					localFilePath, //path
 					myDataObj, monthFrom, monthTo, weatherData, //requested info
 					function (readFileStatus, statusMsg, returnedDataObject) { //callback
 						if (readFileStatus) {
@@ -240,7 +244,6 @@ async function requestData(yearOfData, monthFrom, monthTo, weatherData, formatEx
 			}
 			else {
 				console.log("::> ERROR, System will fallback to local dataset instead...");
-				var localFilePath = path.join(projectRoot, "data", "local-data", "data-" + yearOfData + formatExt)
 				//"./data/local-data/data-" + yearOfData + formatExt;
 				console.log("--Finding local file at path: " + localFilePath);
 				//failed downloading, proceed with reading local file at /data/local-data/
@@ -284,7 +287,7 @@ function downloadFile(yearOfData, formatExt, onComplete) {
         if (onComplete) onComplete(isDLsuccess); // call callback anyway
       });
     });
-		var myReq = https.get("https://raw.githubusercontent.com/jellymiso/resource-dump/main/weather-station/data/" + yearOfData + formatExt, (resp) => {
+		var myReq = https.get(weatherDataFileHost + weatherDataFilePath + yearOfData + formatExt, (resp) => {
 
 			//download data file
 			console.log("--Begin downloading =>")
@@ -338,16 +341,21 @@ function readDataFile(path, dataObj, monthFrom, monthTo, weatherData, onComplete
 	}
 	//
 	//
+		console.log('path: ' + path)
+
 	fs.readFile(path, { encoding:'utf-8' }, function (err, content) {
 		if (err) {
+			console.log("log 1", err.message, content)
 			if (onComplete) { onComplete(isReadSuccess, err.message); }
 		}
 		else {
 
+			console.log("log 2")
 			//
 			var myPathSplit = path.split(".");
 			//if is a xml file
 			if (myPathSplit[myPathSplit.length - 1] == 'xml') {
+				console.log("log 3")
 				//xml stuffs
 				var myXML = content.toString();
 				var xmlDoc = new xmldomPS().parseFromString(myXML, 'text/xml');
@@ -412,6 +420,7 @@ function readDataFile(path, dataObj, monthFrom, monthTo, weatherData, onComplete
 			}
 			//if is a json file
 			else if (myPathSplit[myPathSplit.length - 1] == 'json') {
+				console.log("log 4")
 				//json stuffs
 				var myJson = JSON.parse(content);
 				var jsonTarget = myJson.weather.record;
