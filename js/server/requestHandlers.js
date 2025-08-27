@@ -14,7 +14,7 @@ function appStart(response, request) {
 	console.log("Website Started...");
 	//
 	//function logic
-  const absolutePath = path.join(__dirname, 'html', 'index.htm');
+	const absolutePath = path.join(__dirname, '..', '..', 'html', 'index.htm');
   readHTML(absolutePath, response);
 }
 
