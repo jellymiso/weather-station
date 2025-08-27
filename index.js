@@ -6,7 +6,7 @@ var router = require("./js/server/router");
 var requestHandler = require("./js/server/requestHandlers");
 //
 const path = require('path');
-const projectRoot = path.dirname(require.main.filename);
+const projectRoot = __dirname;
 
 //
 var handle = {};
