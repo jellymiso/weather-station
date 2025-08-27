@@ -25,16 +25,15 @@ function appStaticFiles(response, request) {
 	var pathParts = request.url.split("/");
 	if (pathParts[pathParts.length - 1].split(".")[1] != null) {
 		var requestPathPart = pathParts[1];
-		var filePath = path.join(__dirname, '..', '..', request.url);
 		switch (requestPathPart) {
 			case "css":
 				console.log("--Static Asset => " + requestPathPart);
 
 				try {
-					if (fs.existsSync(filePath)) {
+					if (fs.existsSync(process.cwd() + request.url)) {
 						//file exists
 						response.writeHead(200, { "Content-Type": "text/css" });
-						response.write(fs.readFileSync(filePath, "utf8"));
+						response.write(fs.readFileSync(process.cwd() + request.url, "utf8"));
 					}
 				} catch (err) {
 					response.writeHead(404, { "Content-Type": "text/plain" });
@@ -47,10 +46,10 @@ function appStaticFiles(response, request) {
 				console.log("--Static Asset => " + requestPathPart);
 
 				try {
-					if (fs.existsSync(filePath)) {
+					if (fs.existsSync(process.cwd() + request.url)) {
 						//file exists
 						response.writeHead(200, { "Content-Type": "text/javascript" });
-						response.write(fs.readFileSync(filePath, "utf8"));
+						response.write(fs.readFileSync(process.cwd() + request.url, "utf8"));
 					}
 				} catch (err) {
 					response.writeHead(404, { "Content-Type": "text/plain" });
@@ -64,10 +63,10 @@ function appStaticFiles(response, request) {
 				if (pathext == ".jpg") {
 					console.log("--Asset Type => " + pathext);
 					try {
-						if (fs.existsSync(filePath)) {
+						if (fs.existsSync(process.cwd() + request.url)) {
 							//file exists
 							response.writeHead(200, { "Content-Type": "image/jpeg" });
-							response.write(fs.readFileSync(filePath));
+							response.write(fs.readFileSync(process.cwd() + request.url));
 						}
 					} catch (err) {
 						response.writeHead(404, { "Content-Type": "text/plain" });
@@ -77,10 +76,10 @@ function appStaticFiles(response, request) {
 				else if (pathext == ".png") {
 					console.log("--Asset Type => " + pathext);
 					try {
-						if (fs.existsSync(filePath)) {
+						if (fs.existsSync(process.cwd() + request.url)) {
 							//file exists
 							response.writeHead(200, { "Content-Type": "image/png" });
-							response.write(fs.readFileSync(filePath));
+							response.write(fs.readFileSync(process.cwd() + request.url));
 						}
 					} catch (err) {
 						response.writeHead(404, { "Content-Type": "text/plain" });

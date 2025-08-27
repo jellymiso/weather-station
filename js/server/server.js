@@ -5,7 +5,7 @@ var http = require('http');
 var url = require("url");
 //
 //
-function startServer(route, handle) {
+function startServer(route, handle, projectRoot) {
 	function onRequest(request, response) {
     var pathname = url.parse(request.url).pathname;
     
@@ -13,7 +13,7 @@ function startServer(route, handle) {
 		console.log("Request for " + pathname + " received.");
 		//request.setEncoding('utf8');
 
-		route(pathname, handle, response, request);
+		route(pathname, handle, response, request, projectRoot);
 		
 	}
 	http.createServer(onRequest).listen(process.env.PORT || 41130);

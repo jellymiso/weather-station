@@ -1,5 +1,4 @@
-
-function route(pathname, handle, response, request) {
+function route(pathname, handle, response, request, projectRoot) {
 
 	//Logging route request path
 	console.log("Routing request for path => " + pathname);
@@ -10,7 +9,7 @@ function route(pathname, handle, response, request) {
 	//handle logic
 	if (typeof handle[requestPathPart] === 'function') {
 		//if handle obj contains a defined function, run the function
-		handle[requestPathPart](response, request);
+		handle[requestPathPart](response, request, projectRoot);
 
 	} else {
 		//error handling for no handler found

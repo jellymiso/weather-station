@@ -5,6 +5,10 @@ var server = require("./js/server/server");
 var router = require("./js/server/router");
 var requestHandler = require("./js/server/requestHandlers");
 //
+const path = require('path');
+const projectRoot = path.join(__dirname, '..', '..');
+
+//
 var handle = {};
 
 handle["/"] = requestHandler.appStart;
@@ -13,4 +17,4 @@ handle["/js"] = requestHandler.appStaticFiles;
 handle["/images"] = requestHandler.appStaticFiles;
 handle["/getWeatherData"] = requestHandler.getWeatherData;
 //
-server.startServer(router.route, handle);
+server.startServer(router.route, handle, projectRoot);
