@@ -10,7 +10,8 @@
           "css/**",
           "js/**",
           "images/**",
-          "data/**"
+          "data/**",
+          "data/local-data/**"
         ]
       }
     }

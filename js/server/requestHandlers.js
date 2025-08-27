@@ -240,9 +240,11 @@ async function requestData(yearOfData, monthFrom, monthTo, weatherData, formatEx
 			}
 			else {
 				console.log("::> ERROR, System will fallback to local dataset instead...");
+				var localFilePath = "./data/local-data/data-" + yearOfData + formatExt;
+				console.log("--Finding local file at path: " + localFilePath);
 				//failed downloading, proceed with reading local file at /data/local-data/
 				readDataFile(
-					"./data/local-data/data-" + yearOfData + formatExt, //path
+					localFilePath, //path
 					myDataObj, monthFrom, monthTo, weatherData,  //requested info
 					function (readFileStatus, statusMsg, returnedDataObject) { //callback
 						if (readFileStatus) {
