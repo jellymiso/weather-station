@@ -110,7 +110,7 @@ console.log("Attempting to serve file from path:", projectRoot);
 }
 
 //get weather data
-function getWeatherData(response, request) {
+function getWeatherData(response, request, projectRoot) {
 	console.log("Getting Request Parameters...");
 	if (request.method == 'POST') {
 		var accumulatedData = "";
@@ -139,11 +139,11 @@ function getWeatherData(response, request) {
 				var isJSONdata = value;
 				if (isJSONdata) {
 					console.log("::> File is JSON!")
-					processRequest(response, dataYear, dataMonthFrom, dataMonthTo, weatherData, displayFormat, ".json");
+					processRequest(response, dataYear, dataMonthFrom, dataMonthTo, weatherData, displayFormat, ".json", projectRoot);
 				}
 				else {
 					console.log("::> File is XML!");
-					processRequest(response, dataYear, dataMonthFrom, dataMonthTo, weatherData, displayFormat,".xml");
+					processRequest(response, dataYear, dataMonthFrom, dataMonthTo, weatherData, displayFormat,".xml", projectRoot);
 				}
 			}).catch(function (reason) {
 				throw "ERROR: " + reason;
@@ -161,8 +161,8 @@ function getWeatherData(response, request) {
 }
 
 //process for requesting data and writing to client
-function processRequest(response, dataYear, dataMonthFrom, dataMonthTo, weatherData, displayFormat, fileFormat) {
-	requestData(dataYear, dataMonthFrom, dataMonthTo, weatherData, fileFormat).then(function (value) {
+function processRequest(response, dataYear, dataMonthFrom, dataMonthTo, weatherData, displayFormat, fileFormat, projectRoot) {
+	requestData(dataYear, dataMonthFrom, dataMonthTo, weatherData, fileFormat, projectRoot).then(function (value) {
 		console.log("::> SUCCESS: Begin sending to client now...");
 		//return data to client
 		var objToSend = value;
@@ -208,7 +208,7 @@ async function webPageExistCheck(yearOfData) {
 }
 
 //request the requested file
-async function requestData(yearOfData, monthFrom, monthTo, weatherData, formatExt) {
+async function requestData(yearOfData, monthFrom, monthTo, weatherData, formatExt, projectRoot) {
 	//
 	console.log("--Requesting the " + formatExt + " from the server now...");
 	//
@@ -240,7 +240,8 @@ async function requestData(yearOfData, monthFrom, monthTo, weatherData, formatEx
 			}
 			else {
 				console.log("::> ERROR, System will fallback to local dataset instead...");
-				var localFilePath = "./data/local-data/data-" + yearOfData + formatExt;
+				var localFilePath = path.join(projectRoot, "data", "local-data", "data-" + yearOfData + formatExt)
+				//"./data/local-data/data-" + yearOfData + formatExt;
 				console.log("--Finding local file at path: " + localFilePath);
 				//failed downloading, proceed with reading local file at /data/local-data/
 				readDataFile(
@@ -263,7 +264,6 @@ async function requestData(yearOfData, monthFrom, monthTo, weatherData, formatEx
 
 		})
 	});
-
 }
 
 //download requested file
