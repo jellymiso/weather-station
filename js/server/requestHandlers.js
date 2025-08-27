@@ -273,6 +273,15 @@ function downloadFile(yearOfData, formatExt, onComplete) {
 	//
 	try {
 		var file = fs.createWriteStream(path);
+	    // Add an 'error' event listener to the file stream
+    file.on('error', (err) => {
+      console.log("--File stream error:", err.message);
+      // Clean up the partially created file if necessary
+      fs.unlink(path, (unlinkErr) => {
+        if (unlinkErr) console.log("--Failed to delete file (probably read-only):", unlinkErr.message);
+        if (onComplete) onComplete(isDLsuccess); // call callback anyway
+      });
+    });
 		var myReq = https.get("https://raw.githubusercontent.com/jellymiso/resource-dump/main/weather-station/data/" + yearOfData + formatExt, (resp) => {
 
 			//download data file
@@ -300,9 +309,6 @@ function downloadFile(yearOfData, formatExt, onComplete) {
     console.log("--Unexpected error during download:", e.message);
     if (onComplete) onComplete(isDLsuccess); // always call callback
   }
-
-
-
 }
 
 //read file containing requested data
