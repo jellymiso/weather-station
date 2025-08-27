@@ -14,7 +14,8 @@ function appStart(response, request) {
 	console.log("Website Started...");
 	//
 	//function logic
-	readHTML("./html/index.htm", response);
+  const absolutePath = path.join(__dirname, 'html', 'index.htm');
+  readHTML(absolutePath, response);
 }
 
 //route static assets
