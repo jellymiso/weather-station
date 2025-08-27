@@ -3,5 +3,8 @@
   "lockfileVersion": 1,
   "dependencies": {
     "xmldom": "^0.3.0"
+  },
+  "scripts": {
+    "start": "node index.js"
   }
 }
